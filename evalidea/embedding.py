@@ -135,9 +135,6 @@ class TextEmbedding:
           prompt += f" - comment {i}: {c['body']}\n "
         result_prompt.append(prompt)
 
-    with open("./R1.json", 'w') as fp:
-      json.dump('\n'.join(result_prompt), fp, indent=2)
-
     return full_result, result_prompt
 
 

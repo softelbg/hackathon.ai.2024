@@ -1,4 +1,5 @@
 import os
+import json
 import argparse
 
 from sciveo.tools.logger import *
@@ -6,13 +7,14 @@ from sciveo.tools.configuration import GlobalConfiguration
 from sciveo.tools.remote import PredictorRemoteClient
 from evalidea.reddit import RedditCrawler
 from evalidea.embedding import TextEmbedding
+from evalidea.view import GradioEvalIdeaView
 
 
 def main():
   config = GlobalConfiguration.get(name='evalidea', reload=True)
 
   parser = argparse.ArgumentParser(description='Evaluate Idea CLI')
-  parser.add_argument('command', choices=['init', 'crawl', 'embed', 'build', 'search'], help='Command to execute')
+  parser.add_argument('command', choices=['init', 'crawl', 'embed', 'build', 'search', 'app'], help='Command to execute')
   parser.add_argument('--prompt', type=str, default="", help='prompt text')
   parser.add_argument('--limit', type=int, default=1, help='limit size')
   parser.add_argument('--path', type=str, default="./", help='path')
@@ -48,8 +50,13 @@ def main():
     embedder = TextEmbedding(base_path=args.path)
     embedder.load_db()
     result, result_prompt = embedder.search(args.prompt, args.top_n, args.max_n)
-    debug("search", args.prompt, "found", len(result_prompt))
+    with open("./R1.json", 'w') as fp:
+      json.dump(result, fp, indent=2)
+    debug("search", args.prompt, "found", len(result_prompt), len('\n'.join(result_prompt)))
     debug('\n'.join(result_prompt))
+  elif args.command == 'app':
+    app = GradioEvalIdeaView(base_path=args.path, top_n=args.top_n, max_n=args.max_n)
+    app.launch()
   else:
     warning(args.command, "not implemented")
 
