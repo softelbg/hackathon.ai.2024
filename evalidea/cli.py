@@ -16,6 +16,8 @@ def main():
   parser.add_argument('--prompt', type=str, default="", help='prompt text')
   parser.add_argument('--limit', type=int, default=1, help='limit size')
   parser.add_argument('--path', type=str, default="./", help='path')
+  parser.add_argument('--top-n', type=int, default=10, help='Top N')
+  parser.add_argument('--max-n', type=float, default=3.0, help='Max N')
   args = parser.parse_args()
 
   if args.command == 'init':
@@ -45,10 +47,9 @@ def main():
   elif args.command == 'search':
     embedder = TextEmbedding(base_path=args.path)
     embedder.load_db()
-    result = embedder.search(args.prompt)
-    debug("search", args.prompt)
-    for r in result:
-      debug(r)
+    result, result_prompt = embedder.search(args.prompt, args.top_n, args.max_n)
+    debug("search", args.prompt, "found", len(result_prompt))
+    debug('\n'.join(result_prompt))
   else:
     warning(args.command, "not implemented")
 

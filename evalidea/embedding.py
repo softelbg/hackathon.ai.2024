@@ -110,19 +110,35 @@ class TextEmbedding:
         debug("load", self.path_map_file)
         self.map = json.load(fp)
 
-  def search(self, text):
+  def search(self, text, top_n=20, max_distance=3):
     embedding = self.embed_one(text)
-    idx, d = self.vdb.get_nns_by_vector(embedding, 3, search_k=-1, include_distances=True)
+    idx, d = self.vdb.get_nns_by_vector(embedding, top_n, search_k=-1, include_distances=True)
     debug("search", text, "=>", idx, "distance", d)
-    result = []
+    full_result = []
+    result_prompt = []
+    set_ids = set()
     for i, id in enumerate(idx):
+      if d[i] > max_distance:
+        continue
       id = str(id)
       submission = self.data[self.map[id]["id"]]
       text = submission[self.map[id]["column"]]
       if "pos" in self.map[id]:
         text = text[self.map[id]["pos"]]
-      result.append({"submission": submission, "text": text, "dist": d[i]})
-    return result
+      full_result.append({"submission": submission, "text": text, "dist": d[i]})
+
+      if id not in set_ids:
+        set_ids.add(id)
+        prompt = f"{submission['title']}\n "
+        prompt += f"{submission['content']}.\n {len(submission['comments'])} comments:\n "
+        for i, c in enumerate(submission['comments']):
+          prompt += f" - comment {i}: {c['body']}\n "
+        result_prompt.append(prompt)
+
+    with open("./R1.json", 'w') as fp:
+      json.dump('\n'.join(result_prompt), fp, indent=2)
+
+    return full_result, result_prompt
 
 
 if __name__ == "__main__":
