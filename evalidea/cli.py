@@ -12,7 +12,8 @@ def main():
   config = GlobalConfiguration.get(name='evalidea', reload=True)
 
   parser = argparse.ArgumentParser(description='Evaluate Idea CLI')
-  parser.add_argument('command', choices=['init', 'crawl', 'embed'], help='Command to execute')
+  parser.add_argument('command', choices=['init', 'crawl', 'embed', 'build', 'search'], help='Command to execute')
+  parser.add_argument('--prompt', type=str, default="", help='prompt text')
   parser.add_argument('--limit', type=int, default=1, help='limit size')
   parser.add_argument('--path', type=str, default="./", help='path')
   args = parser.parse_args()
@@ -38,6 +39,13 @@ def main():
   elif args.command == 'embed':
     embedder = TextEmbedding(base_path=args.path)
     embedder.run()
+  elif args.command == 'build':
+    embedder = TextEmbedding(base_path=args.path)
+    embedder.build_db()
+  elif args.command == 'search':
+    embedder = TextEmbedding(base_path=args.path)
+    embedder.load_db()
+    embedder.search(args.prompt)
   else:
     warning(args.command, "not implemented")
 

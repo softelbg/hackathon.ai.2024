@@ -15,6 +15,7 @@ setup(
       'praw>=0.0.0',
       'annoy>=0.0.0',
       'openai>=0.0.0',
+      'flask>=0.0.0',
     ],
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
