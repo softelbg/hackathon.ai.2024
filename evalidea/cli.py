@@ -3,14 +3,16 @@ import argparse
 
 from sciveo.tools.logger import *
 from sciveo.tools.configuration import GlobalConfiguration
+from evalidea.reddit import RedditCrawler
 
 
 def main():
-  config = GlobalConfiguration.get()
+  config = GlobalConfiguration.get(name='evalidea', reload=True)
 
   parser = argparse.ArgumentParser(description='Evaluate Idea CLI')
-  parser.add_argument('command', choices=['init'], help='Command to execute')
-  parser.add_argument('--path-dst', type=str, default="./data", help='dst path')
+  parser.add_argument('command', choices=['init', 'crawl'], help='Command to execute')
+  parser.add_argument('--limit', type=int, default=1, help='limit size')
+  parser.add_argument('--path', type=str, default="./data", help='path')
   args = parser.parse_args()
 
   if args.command == 'init':
@@ -27,4 +29,12 @@ def main():
       with open(os.path.join(base_path, "default"), 'w') as fp:
         for line in default_lines:
           fp.write(line + '\n')
+  elif args.command == 'crawl':
+    debug("start crawling to", args.path)
+    crawler = RedditCrawler(path_data=args.path)
+    crawler.crawl_subreddit("shopify", limit=args.limit)
+  else:
+    warning(args.command, "not implemented")
 
+if __name__ == '__main__':
+  main()
