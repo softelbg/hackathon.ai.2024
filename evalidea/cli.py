@@ -12,7 +12,7 @@ def main():
   parser = argparse.ArgumentParser(description='Evaluate Idea CLI')
   parser.add_argument('command', choices=['init', 'crawl'], help='Command to execute')
   parser.add_argument('--limit', type=int, default=1, help='limit size')
-  parser.add_argument('--path', type=str, default="./data", help='path')
+  parser.add_argument('--path', type=str, default="./", help='path')
   args = parser.parse_args()
 
   if args.command == 'init':
@@ -31,7 +31,7 @@ def main():
           fp.write(line + '\n')
   elif args.command == 'crawl':
     debug("start crawling to", args.path)
-    crawler = RedditCrawler(path_data=args.path)
+    crawler = RedditCrawler(base_path=args.path)
     crawler.crawl_subreddit("shopify", limit=args.limit)
   else:
     warning(args.command, "not implemented")
