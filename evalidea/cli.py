@@ -45,7 +45,10 @@ def main():
   elif args.command == 'search':
     embedder = TextEmbedding(base_path=args.path)
     embedder.load_db()
-    embedder.search(args.prompt)
+    result = embedder.search(args.prompt)
+    debug("search", args.prompt)
+    for r in result:
+      debug(r)
   else:
     warning(args.command, "not implemented")
 

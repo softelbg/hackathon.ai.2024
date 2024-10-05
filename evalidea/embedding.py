@@ -18,6 +18,13 @@ class TextEmbedding:
 
     self.client = PredictorRemoteClient(url="https://sof-1.softel.bg:8901", verify=False)
 
+    if os.path.isfile(self.path_data_file):
+      with open(self.path_data_file, 'r') as fp:
+        debug("load", self.path_data_file)
+        self.data = json.load(fp)
+    else:
+      self.data = {}
+
   def embed_one(self, text):
     max_size = 1024
     if len(text) > max_size:
@@ -38,13 +45,6 @@ class TextEmbedding:
     return Y[0]
 
   def run(self):
-    if os.path.isfile(self.path_data_file):
-      with open(self.path_data_file, 'r') as fp:
-        debug("load", self.path_data_file)
-        self.data = json.load(fp)
-    else:
-      self.data = {}
-
     if os.path.isfile(self.path_embed_file):
       with open(self.path_embed_file, 'r') as fp:
         debug("load", self.path_embed_file)
@@ -114,7 +114,15 @@ class TextEmbedding:
     embedding = self.embed_one(text)
     idx, d = self.vdb.get_nns_by_vector(embedding, 3, search_k=-1, include_distances=True)
     debug("search", text, "=>", idx, "distance", d)
-
+    result = []
+    for i, id in enumerate(idx):
+      id = str(id)
+      submission = self.data[self.map[id]["id"]]
+      text = submission[self.map[id]["column"]]
+      if "pos" in self.map[id]:
+        text = text[self.map[id]["pos"]]
+      result.append({"submission": submission, "text": text, "dist": d[i]})
+    return result
 
 
 if __name__ == "__main__":
