@@ -10,17 +10,21 @@ class GradioEvalIdeaView:
     self.top_n = top_n
     self.max_n = max_n
 
-    self.interface = gr.Interface(
-      fn=self.evaluate_idea,
-      inputs=gr.Textbox(lines=4, placeholder="Enter your text here..."),
-      outputs=[
-        gr.Textbox(label="Output"),
-        gr.Textbox(label="Debug Output")
-      ],
-      title="Evaluation of Ideas and Projects",
-      description="Enter an idea to evaluate and click the button.",
-      live=False
-    )
+    with gr.Blocks() as self.interface:
+      gr.Markdown("# Idea Evaluation")
+      gr.Markdown("Enter an idea and click the button to evaluate.")
+
+      with gr.Row():
+        with gr.Column():
+          self.input_text = gr.Textbox(lines=4, placeholder="Enter your text here...")
+          self.submit_button = gr.Button("Evaluate")
+          self.image_output = gr.Image("/Users/sgeorgiev/Downloads/sky_gate_cert.jpg", label="Image Output", height=300)
+
+        with gr.Column():
+          self.output_text = gr.Textbox(label="Output")
+          self.debug_output = gr.Textbox(label="Debug Output")
+
+      self.submit_button.click(self.evaluate_idea, inputs=self.input_text, outputs=[self.output_text, self.debug_output])
 
   def evaluate_idea(self, input_text):
     embedder = TextEmbedding(base_path=self.base_path)
