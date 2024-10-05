@@ -13,7 +13,10 @@ class GradioEvalIdeaView:
     self.interface = gr.Interface(
       fn=self.evaluate_idea,
       inputs=gr.Textbox(lines=4, placeholder="Enter your text here..."),
-      outputs=gr.Textbox(),
+      outputs=[
+        gr.Textbox(label="Output"),
+        gr.Textbox(label="Debug Output")
+      ],
       title="Evaluation of Ideas and Projects",
       description="Enter an idea to evaluate and click the button.",
       live=False
@@ -25,8 +28,9 @@ class GradioEvalIdeaView:
     result, result_prompt = embedder.search(input_text, self.top_n, self.max_n)
     debug("search", input_text, "found", len(result_prompt), len('\n'.join(result_prompt)))
 
-    result = f"result: {result_prompt}"
-    return result
+    result_prompt = f"result: {result_prompt}"
+    debug_text = result
+    return result_prompt, debug_text
 
   def launch(self):
     self.interface.launch()

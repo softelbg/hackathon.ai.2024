@@ -50,7 +50,7 @@ def main():
     embedder = TextEmbedding(base_path=args.path)
     embedder.load_db()
     result, result_prompt = embedder.search(args.prompt, args.top_n, args.max_n)
-    with open("./R1.json", 'w') as fp:
+    with open("./debug.json", 'w') as fp:
       json.dump(result, fp, indent=2)
     debug("search", args.prompt, "found", len(result_prompt), len('\n'.join(result_prompt)))
     debug('\n'.join(result_prompt))
