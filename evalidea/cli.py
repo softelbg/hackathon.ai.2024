@@ -3,14 +3,16 @@ import argparse
 
 from sciveo.tools.logger import *
 from sciveo.tools.configuration import GlobalConfiguration
+from sciveo.tools.remote import PredictorRemoteClient
 from evalidea.reddit import RedditCrawler
+from evalidea.embedding import TextEmbedding
 
 
 def main():
   config = GlobalConfiguration.get(name='evalidea', reload=True)
 
   parser = argparse.ArgumentParser(description='Evaluate Idea CLI')
-  parser.add_argument('command', choices=['init', 'crawl'], help='Command to execute')
+  parser.add_argument('command', choices=['init', 'crawl', 'embed'], help='Command to execute')
   parser.add_argument('--limit', type=int, default=1, help='limit size')
   parser.add_argument('--path', type=str, default="./", help='path')
   args = parser.parse_args()
@@ -33,6 +35,9 @@ def main():
     debug("start crawling to", args.path)
     crawler = RedditCrawler(base_path=args.path)
     crawler.crawl_subreddit("shopify", limit=args.limit)
+  elif args.command == 'embed':
+    embedder = TextEmbedding(base_path=args.path)
+    embedder.run()
   else:
     warning(args.command, "not implemented")
 

@@ -44,7 +44,7 @@ class RedditCrawler:
         debug(f"saved submission: {submission.title}")
       except Exception as e:
         error("exception", e)
-      time.sleep(1)
+      time.sleep(0.2)
 
   def save_submission(self, submission):
     self.data.setdefault(submission.id, {})
@@ -70,5 +70,6 @@ class RedditCrawler:
       json.dump({"after": submission.fullname}, fp, indent=2)
 
 if __name__ == "__main__":
+  config = GlobalConfiguration.get(name='evalidea', reload=True)
   crawler = RedditCrawler()
   crawler.crawl_subreddit("shopify", limit=1)

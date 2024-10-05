@@ -11,9 +11,10 @@ setup(
     install_requires=[
       'numpy>=0.0.0',
       'requests>=0.0.0',
-      'sciveo>=0.0.0',
+      'sciveo[media]>=0.0.0',
       'praw>=0.0.0',
       'annoy>=0.0.0',
+      'openai>=0.0.0',
     ],
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
