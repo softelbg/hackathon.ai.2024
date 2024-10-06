@@ -46,7 +46,6 @@ class GradioEvalIdeaView:
       score_text = f"score: {score['score']} / 10\n\nexplain: {score['explain']}"
     except:
       warning("can not parse", score)
-    # score = "test"
 
     debug_text = ""
     html = ""
