@@ -49,11 +49,10 @@ def main():
   elif args.command == 'search':
     embedder = TextEmbedding(base_path=args.path)
     embedder.load_db()
-    result, result_prompt = embedder.search(args.prompt, args.top_n, args.max_n)
+    result, result_submissions = embedder.search(args.prompt, args.top_n, args.max_n)
     with open("./debug.json", 'w') as fp:
       json.dump(result, fp, indent=2)
-    debug("search", args.prompt, "found", len(result_prompt), len('\n'.join(result_prompt)))
-    debug('\n'.join(result_prompt))
+    debug("search", args.prompt, "found", len(result_submissions))
   elif args.command == 'app':
     app = GradioEvalIdeaView(base_path=args.path, top_n=args.top_n, max_n=args.max_n)
     app.launch()

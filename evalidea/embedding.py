@@ -116,6 +116,7 @@ class TextEmbedding:
     debug("search", text, "=>", idx, "distance", d)
     full_result = []
     result_prompt = []
+    result_submissions = []
     set_ids = set()
     for i, id in enumerate(idx):
       if d[i] > max_distance:
@@ -127,15 +128,16 @@ class TextEmbedding:
         text = text[self.map[id]["pos"]]
       full_result.append({"submission": submission, "text": text, "dist": d[i]})
 
-      if id not in set_ids:
-        set_ids.add(id)
+      if submission['fullname'] not in set_ids:
+        set_ids.add(submission['fullname'])
+        result_submissions.append({"submission": submission, "text": text, "dist": d[i]})
         prompt = f"{submission['title']}\n "
         prompt += f"{submission['content']}.\n {len(submission['comments'])} comments:\n "
         for i, c in enumerate(submission['comments']):
           prompt += f" - comment {i}: {c['body']}\n "
         result_prompt.append(prompt)
 
-    return full_result, result_prompt
+    return full_result, result_submissions
 
 
 if __name__ == "__main__":

@@ -11,7 +11,7 @@ class OpenaiIdeaEval:
   def __init__(self):
     self.config = GlobalConfiguration.get()
     self.api_key = self.config['OPENAI_API_KEY']
-    self.client = OpenAI(api_key=self.api_key)
+    # self.client = OpenAI(api_key=self.api_key)
 
   def preprocess(self, data):
     result = ''
@@ -23,7 +23,6 @@ class OpenaiIdeaEval:
     current_prompt = f"Is {current_prompt} a good startup idea? Give me short answer of the score from 1 to 10, for example: score: 3 / 10"
     context = self.preprocess(data)
     combined_prompt = f"Context:\n{context}\n\nQuestion:\n{current_prompt}"
-    # combined_prompt = combined_prompt.encode('ascii', 'ignore').decode('ascii')
 
     params = {
       "model": "gpt-4o",
