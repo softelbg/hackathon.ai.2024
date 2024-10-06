@@ -21,7 +21,7 @@ class OpenaiIdeaEval:
     return result
 
   def score(self, current_prompt):
-    return self.predict(f"Is {current_prompt} a good startup idea? Be more critical and focus on the context. Give me short answer of the score from 0 to 10, for example: score: 3 / 10")
+    return self.predict(f"Is {current_prompt} a good startup idea? Be more critical and focus on the context. Give me short answer of the score from 0 to 10. The response should be json dict with 'score': 2, 'explain': 'short explanaition why'")
 
   def predict(self, current_prompt):
     combined_prompt = f"Context:\n{self.context}\n\nQuestion:\n{current_prompt}"
