@@ -20,6 +20,7 @@ def main():
   parser.add_argument('--path', type=str, default="./", help='path')
   parser.add_argument('--top-n', type=int, default=10, help='Top N')
   parser.add_argument('--max-n', type=float, default=3.0, help='Max N')
+  parser.add_argument('--share', type=bool, default=False, help='Share Flag')
   args = parser.parse_args()
 
   if args.command == 'init':
@@ -54,10 +55,17 @@ def main():
       json.dump(result, fp, indent=2)
     debug("search", args.prompt, "found", len(result_submissions))
   elif args.command == 'app':
-    app = GradioEvalIdeaView(base_path=args.path, top_n=args.top_n, max_n=args.max_n)
+    app = GradioEvalIdeaView(base_path=args.path, top_n=args.top_n, max_n=args.max_n, share=args.share)
     app.launch()
   else:
     warning(args.command, "not implemented")
 
 if __name__ == '__main__':
   main()
+
+# Demo ideas
+#
+# shopify plugin development to optimise checkout experience
+# shopify plugin development for sales forecast, predictions and reporting analytics
+# shopify plugin development for helping with taxes in USA
+#

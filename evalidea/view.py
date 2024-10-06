@@ -6,14 +6,15 @@ from evalidea.openai_client import OpenaiIdeaEval
 
 
 class GradioEvalIdeaView:
-  def __init__(self, base_path, top_n, max_n):
+  def __init__(self, base_path, top_n, max_n, share=False):
     self.base_path = base_path
     self.top_n = top_n
     self.max_n = max_n
+    self.share = share
 
     with gr.Blocks() as self.interface:
       gr.Markdown("# Startup Idea Evaluation")
-      gr.Markdown("Enter a startup idea and click the button to evaluate.")
+      gr.Markdown("Enter a startup idea and click the button to evaluate.<br>Currently only shopify-related ideas (mostly for shopify plugins) are evaluated.")
 
       with gr.Row():
         with gr.Column():
@@ -34,23 +35,26 @@ class GradioEvalIdeaView:
     result, result_submissions = embedder.search(input_text, self.top_n, self.max_n)
     debug("search found", len(result), len(result_submissions), input_text)
 
-    debug_text = f"{len(result_submissions)} submissions found\n"
+    debug_text = f"{len(result_submissions)} signals found\n"
     for s in result_submissions:
       debug_text += f"{s['submission']['title']} D[{s['dist']:.2f}] [link]({s['submission']['url']})\n"
+      if 'body' in s['text']:
+        text = s['text']['body'].replace('\n', ' ')
+        debug_text += f"comment: [{text[:80]}]\n"
     debug_text += "\n"
     html = debug_text.replace("\n", "<br>")
 
-    score = OpenaiIdeaEval()(result, input_text)
+    score = OpenaiIdeaEval(result).score(input_text)
     # score = "test"
 
     return score, html, debug_text
 
   def launch(self):
-    self.interface.launch()
+    self.interface.launch(share=self.share)
 
 
 if __name__ == "__main__":
   config = GlobalConfiguration.get(name='evalidea', reload=True)
 
   app = GradioEvalIdeaView(base_path="./", top_n=10, max_n=2.8)
-  app.launch()
+  app.launch(share=False)

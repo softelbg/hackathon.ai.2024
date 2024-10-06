@@ -8,9 +8,10 @@ from sciveo.tools.configuration import GlobalConfiguration
 
 
 class OpenaiIdeaEval:
-  def __init__(self):
+  def __init__(self, context):
     self.config = GlobalConfiguration.get()
     self.api_key = self.config['OPENAI_API_KEY']
+    self.context = self.preprocess(context)
     # self.client = OpenAI(api_key=self.api_key)
 
   def preprocess(self, data):
@@ -19,10 +20,11 @@ class OpenaiIdeaEval:
       result += chunk['submission']['title'] + ' ' + chunk['submission']['content'] + ' '
     return result
 
-  def __call__(self, data, current_prompt):
-    current_prompt = f"Is {current_prompt} a good startup idea? Give me short answer of the score from 1 to 10, for example: score: 3 / 10"
-    context = self.preprocess(data)
-    combined_prompt = f"Context:\n{context}\n\nQuestion:\n{current_prompt}"
+  def score(self, current_prompt):
+    return self.predict(f"Is {current_prompt} a good startup idea? Be more critical and focus on the context. Give me short answer of the score from 0 to 10, for example: score: 3 / 10")
+
+  def predict(self, current_prompt):
+    combined_prompt = f"Context:\n{self.context}\n\nQuestion:\n{current_prompt}"
 
     params = {
       "model": "gpt-4o",
@@ -64,5 +66,5 @@ if __name__ == "__main__":
   embedder = TextEmbedding()
   embedder.load_db()
   result, result_prompt = embedder.search(current_prompt, top_n=10, max_distance=2.8)
-  answer = OpenaiIdeaEval()(result, current_prompt)
+  answer = OpenaiIdeaEval(result).score(current_prompt)
   debug(answer)
